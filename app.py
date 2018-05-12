@@ -3,14 +3,13 @@ from sklearn.externals import joblib
 import numpy as np
 import re 
 import nltk
-from flask import jsonify
 from sklearn.naive_bayes import GaussianNB
-nltk.download('stopwords')
 from nltk.corpus import stopwords
-from nltk.stem.porter import PorterStemmer
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.feature_extraction.text import TfidfTransformer 
 from sklearn.feature_extraction.text import TfidfVectorizer
+nltk.download('stopwords')
+nltk.download('wordnet')
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
 
 
 app = Flask(__name__)
@@ -26,8 +25,8 @@ def main():
 		review = re.sub('[^a-zA-Z]', ' ', review)
 		review = review.lower()
 		review = review.split()
-		ps = PorterStemmer()
-		review = [ps.stem(word) for word in review if not word in set(stopwords.words('english'))]
+		lemmatizer = WordNetLemmatizer()
+		review = [lemmatizer.lemmatize(word) for word in review if not word in set(stopwords.words('english'))]
 		review = ' '.join(review)
 		corpus.append(review)
 		classifier = joblib.load('classifier.pkl')
